@@ -54,3 +54,24 @@ char core_drop_tetrimino(void) {
     ++row;
     return 0;
 }
+
+char core_rotate_tetrimino(void) {
+    char len = 3 + ((type >> 2) < 2);
+    char temp = (type & 0xFC) | ((type + 1) & 3);
+    const char *iter = pieces[temp];
+    for (char i = 0; i < len; ++i) {
+        for (char j = 0; j < len; ++j, ++iter) {
+            if (*iter == '*') {
+                if ((row + i) >= 0 &&
+                    ((row + i) < 20) &&
+                    (col + j) >= 0 &&
+                    ((col + j) < 10) &&
+                    grid[(row + i) * 10 + col + j] == '*') {
+                    return 1;
+                }
+            }
+        }
+    }
+    type = temp;
+    return 0;
+}

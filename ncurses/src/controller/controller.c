@@ -66,6 +66,12 @@ void controller_main(void) {
         case 'q':
             cond = 0;
             break;
+        case 'Z':
+        case 'z':
+            clear_tetrimino();
+            core_rotate_tetrimino();
+            draw_tetrimino();
+            break;
         }
         if (fcnt == 30) {
             fcnt = 0;
