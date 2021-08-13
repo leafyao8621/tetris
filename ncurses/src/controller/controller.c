@@ -37,6 +37,15 @@ static void clear_tetrimino(void) {
     }
 }
 
+static void clear_rows(void) {
+    char *iter = grid;
+    for (char i = 0; i < 20; ++i) {
+        for (char j = 0; j < 10; ++j, ++iter) {
+            mvaddch(i + 1, j + 1, *iter ? '*' : ' ');
+        }
+    }
+}
+
 void controller_initialize(void) {
     w = initscr();
     noecho();
@@ -59,6 +68,7 @@ void controller_main(void) {
     int c;
     char cond = 1;
     char fcnt = 0;
+    char threshold = 30;
     for (; cond; ++fcnt) {
         c = getch();
         switch (c) {
@@ -72,14 +82,49 @@ void controller_main(void) {
             core_rotate_tetrimino();
             draw_tetrimino();
             break;
-        }
-        if (fcnt == 30) {
+        case KEY_LEFT:
+            clear_tetrimino();
+            core_move_left_tetrimino();
+            draw_tetrimino();
+            break;
+        case KEY_RIGHT:
+            clear_tetrimino();
+            core_move_right_tetrimino();
+            draw_tetrimino();
+            break;
+        case KEY_DOWN:
+            threshold = 10;
+            break;
+        case KEY_UP:
             fcnt = 0;
+            clear_tetrimino();
+            for (; !core_drop_tetrimino(););
+            draw_tetrimino();
+            core_clear();
+            if (offset) {
+                clear_rows();
+            }
+            core_generate();
+            if (core_check_drop()) {
+                cond = 0;
+            }
+            break;
+        }
+        if (fcnt >= threshold) {
+            fcnt = 0;
+            threshold = 30;
             clear_tetrimino();
             char ret = core_drop_tetrimino();
             draw_tetrimino();
             if (ret) {
+                core_clear();
+                if (offset) {
+                    clear_rows();
+                }
                 core_generate();
+                if (core_check_drop()) {
+                    cond = 0;
+                }
             }
         }
         usleep(16667);
@@ -89,5 +134,8 @@ void controller_main(void) {
 void controller_finalize(void) {
     nodelay(w, 0);
     clear();
+    mvaddstr(0, 0, "TETRIS");
+    mvaddstr(1, 0, "Game Over");
+    getch();
     endwin();
 }
