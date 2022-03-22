@@ -14,7 +14,11 @@ static inline void set_sprites(void) {
     for (uint8_t i = 0, ii = 0; i < 4; ++i) {
         for (uint8_t j = 0; j < 4; ++j, ++ii, msk >>= 1) {
             set_sprite_tile(ii, (tetrimino & msk) != 0);
-            move_sprite(ii, 8 + (j << 3), 16 + (i << 3));
+            move_sprite(
+                ii,
+                8 + (tetrimino_col << 3) + (j << 3),
+                16 + (tetrimino_row << 3) + (i << 3)
+            );
         }
     }
 }
@@ -27,7 +31,6 @@ void controller_initialize(void) {
 
     SPRITES_8x8;
     set_sprite_data(0, 1, tiles);
-    set_sprite_tile(0, 0);
 
     SHOW_BKG;
     SHOW_SPRITES;

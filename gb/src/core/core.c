@@ -35,6 +35,7 @@ const uint16_t tetriminoes[28] = {
 };
 uint16_t board[18];
 uint8_t tetrimino_idx;
+int8_t tetrimino_row, tetrimino_col;
 
 void core_initialize(void) {
     static uint16_t seed;
@@ -43,8 +44,13 @@ void core_initialize(void) {
     initrand(seed);
 }
 
+static void generate_tetrimino(void) {
+    tetrimino_idx = (rand() % 7) << 2;
+    tetrimino_row = 0;
+    tetrimino_col = 0;
+}
+
 void core_reset(void) {
-    tetrimino_idx = (rand() % 7) << 2;
-    tetrimino_idx = (rand() % 7) << 2;
-    memset(board, 0, 128);
+    memset(board, 0, 36);
+    generate_tetrimino();
 }
