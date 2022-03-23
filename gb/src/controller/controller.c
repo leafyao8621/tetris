@@ -7,10 +7,12 @@
 static uint8_t background[360], field[180];
 
 static inline void render_tetrimino(void) {
-    uint16_t tetrimino = tetriminoes[tetrimino_idx];
-    uint16_t msk = 0x8000;
-    for (uint8_t i = 0, ii = 0; i < 4; ++i) {
-        for (uint8_t j = 0; j < 4; ++j, ++ii, msk >>= 1) {
+    static uint16_t tetrimino, msk;
+    static uint8_t i, j, ii;
+    tetrimino = tetriminoes[tetrimino_idx];
+    msk = 0x8000;
+    for (i = 0, ii = 0; i < 4; ++i) {
+        for (j = 0; j < 4; ++j, ++ii, msk >>= 1) {
             set_sprite_tile(ii, (tetrimino & msk) != 0);
             move_sprite(
                 ii,
