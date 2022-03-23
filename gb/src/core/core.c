@@ -34,7 +34,7 @@ const uint16_t tetriminoes[28] = {
     0x2640
 };
 uint16_t board[18];
-uint8_t tetrimino_idx;
+uint8_t tetrimino_idx, msg;
 int8_t tetrimino_row, tetrimino_col;
 
 void core_initialize(void) {
@@ -44,7 +44,7 @@ void core_initialize(void) {
     initrand(seed);
 }
 
-static void generate_tetrimino(void) {
+static inline void generate_tetrimino(void) {
     tetrimino_idx = (rand() % 7) << 2;
     tetrimino_row = 0;
     tetrimino_col = 0;
@@ -53,4 +53,43 @@ static void generate_tetrimino(void) {
 void core_reset(void) {
     memset(board, 0, 36);
     generate_tetrimino();
+}
+
+static inline void place_tetrimino(void) {
+    static uint16_t msk;
+    static uint8_t i, j;
+    msk = 0x8000;
+    for (uint8_t i = 0; i < 4; ++i) {
+        for (uint8_t j = 0; j < 4; ++j, msk >>= 1) {
+            if (tetriminoes[tetrimino_idx] & msk) {
+                board[tetrimino_row + i] |= 0x200 >> (tetrimino_col + j);
+            }
+        }
+    }
+}
+
+void core_drop(void) {
+    static uint16_t msk;
+    static uint8_t i, j;
+    msk = 0x8000;
+    for (uint8_t i = 0; i < 4; ++i) {
+        for (uint8_t j = 0; j < 4; ++j, msk >>= 1) {
+            if (
+                (tetriminoes[tetrimino_idx] & msk) &&
+                (
+                    tetrimino_row + i == 17 ||
+                    (
+                        board[tetrimino_row + i + 1] &
+                        (0x200 >> (tetrimino_col + j))
+                    )
+                )
+            ) {
+                place_tetrimino();
+                generate_tetrimino();
+                msg |= RENDER_FLAG;
+                return;
+            }
+        }
+    }
+    ++tetrimino_row;
 }

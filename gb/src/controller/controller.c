@@ -4,11 +4,9 @@
 #include "../core/core.h"
 #include "../assets/tiles.h"
 
-#define CNT_START 2
+static uint8_t background[360], field[180];
 
-static unsigned char background[360];
-
-static inline void set_sprites(void) {
+static inline void render_tetrimino(void) {
     uint16_t tetrimino = tetriminoes[tetrimino_idx];
     uint16_t msk = 0x8000;
     for (uint8_t i = 0, ii = 0; i < 4; ++i) {
@@ -21,6 +19,21 @@ static inline void set_sprites(void) {
             );
         }
     }
+}
+
+static inline void render_field(void) {
+    static uint8_t *iter_field, i, j;
+    static uint16_t *iter_board, buf, msk;
+    iter_field = field;
+    iter_board = board;
+    for (i = 0; i < 18; ++i, ++iter_board) {
+        buf = *iter_board;
+        msk = 0x200;
+        for (j = 0; j < 10; ++j, ++iter_field, msk >>= 1) {
+            *iter_field = (buf & msk) != 0;
+        }
+    }
+    set_bkg_tiles(0, 0, 10, 18, field);
 }
 
 void controller_initialize(void) {
@@ -43,17 +56,22 @@ void controller_initialize(void) {
     memset(background, 0, 360);
     set_bkg_tiles(0, 0, 20, 18, background);
 
-    set_sprites();
+    render_tetrimino();
 
     wait_vbl_done();
 }
 
 void controller_main_loop(void) {
-    static unsigned char keys, prev, finished;
+    static uint8_t keys, prev, finished;
     prev = 0;
     for (uint8_t f_cnt = 0;; ++f_cnt) {
         keys = joypad();
         if (!(f_cnt % 30)) {
+            core_drop();
+            render_tetrimino();
+            if (msg & RENDER_FLAG) {
+                render_field();
+            }
         }
         prev = keys;
         wait_vbl_done();
