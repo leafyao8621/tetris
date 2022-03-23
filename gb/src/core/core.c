@@ -59,8 +59,8 @@ static inline void place_tetrimino(void) {
     static uint16_t msk;
     static uint8_t i, j;
     msk = 0x8000;
-    for (uint8_t i = 0; i < 4; ++i) {
-        for (uint8_t j = 0; j < 4; ++j, msk >>= 1) {
+    for (i = 0; i < 4; ++i) {
+        for (j = 0; j < 4; ++j, msk >>= 1) {
             if (tetriminoes[tetrimino_idx] & msk) {
                 board[tetrimino_row + i] |= 0x200 >> (tetrimino_col + j);
             }
@@ -72,8 +72,8 @@ void core_drop(void) {
     static uint16_t msk;
     static uint8_t i, j;
     msk = 0x8000;
-    for (uint8_t i = 0; i < 4; ++i) {
-        for (uint8_t j = 0; j < 4; ++j, msk >>= 1) {
+    for (i = 0; i < 4; ++i) {
+        for (j = 0; j < 4; ++j, msk >>= 1) {
             if (
                 (tetriminoes[tetrimino_idx] & msk) &&
                 (
