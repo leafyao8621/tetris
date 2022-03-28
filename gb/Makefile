@@ -4,8 +4,8 @@ ASM = $(SRC:.c=.asm)
 LST = $(SRC:.c=.lst)
 SYM = $(SRC:.c=.sym)
 OBJ = $(SRC:.c=.o)
-IHX = ms.ihx
-BIN = ms.gb
+IHX = tetris.ihx
+BIN = tetris.gb
 
 %.o: %.c
 	$(CC) -c $< -o $@ -I/home/leaf/gbdk/include
