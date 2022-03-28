@@ -68,6 +68,25 @@ static inline void place_tetrimino(void) {
     }
 }
 
+static inline void clear_board(void) {
+    static uint8_t i;
+    static uint16_t *iter, *iter_move, prev, cur;
+    for (i = 0, iter = board + 1; i < 17; ++i, ++iter) {
+        if (*iter == 0x3ff) {
+            for (
+                iter_move = board + 1, prev = *board, cur = board[1];
+                iter_move <= iter;
+                ++iter_move
+            ) {
+                cur = *iter_move;
+                *iter_move = prev;
+                prev = cur;
+            }
+            *board = 0;
+        }
+    }
+}
+
 void core_drop(void) {
     static uint16_t msk;
     static uint8_t i, j;
@@ -85,6 +104,7 @@ void core_drop(void) {
                 )
             ) {
                 place_tetrimino();
+                clear_board();
                 generate_tetrimino();
                 msg |= RENDER_FLAG;
                 return;
