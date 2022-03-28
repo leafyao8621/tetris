@@ -55,9 +55,7 @@ void controller_initialize(void) {
     core_initialize();
     core_reset();
 
-    memset(background, 0, 360);
-    set_bkg_tiles(0, 0, 20, 18, background);
-
+    render_field();
     render_tetrimino();
 
     wait_vbl_done();
