@@ -69,6 +69,14 @@ void controller_main_loop(void) {
         if (!(f_cnt % 30)) {
             core_drop();
             render_tetrimino();
+            if (msg & RESET_FLAG) {
+                memset(background, 1, 360);
+                set_bkg_tiles(0, 0, 20, 18, background);
+                waitpad(J_START);
+                core_reset();
+                render_field();
+                render_tetrimino();
+            }
             if (msg & RENDER_FLAG) {
                 render_field();
                 msg ^= RENDER_FLAG;

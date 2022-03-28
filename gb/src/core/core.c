@@ -53,6 +53,7 @@ static inline void generate_tetrimino(void) {
 void core_reset(void) {
     memset(board, 0, 36);
     generate_tetrimino();
+    msg = 0;
 }
 
 static inline void place_tetrimino(void) {
@@ -103,6 +104,10 @@ void core_drop(void) {
                     )
                 )
             ) {
+                if (!tetrimino_row) {
+                    msg |= RESET_FLAG;
+                    return;
+                }
                 place_tetrimino();
                 clear_board();
                 generate_tetrimino();

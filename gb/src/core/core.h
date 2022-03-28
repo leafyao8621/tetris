@@ -3,6 +3,7 @@
 
 #define RENDER_FLAG 0x1
 #define UPDATE_FLAG 0x2
+#define RESET_FLAG 0x4
 
 #include <stdint.h>
 
