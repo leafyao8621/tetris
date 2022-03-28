@@ -73,6 +73,28 @@ void controller_main_loop(void) {
             render_tetrimino();
             if (msg & RENDER_FLAG) {
                 render_field();
+                msg ^= RENDER_FLAG;
+            }
+        }
+        if ((keys & J_A) && !(prev & J_A)) {
+            core_rotate();
+            if (msg & UPDATE_FLAG) {
+                render_tetrimino();
+                msg ^= UPDATE_FLAG;
+            }
+        }
+        if ((keys & J_RIGHT) && !(prev & J_RIGHT)) {
+            core_move_right();
+            if (msg & UPDATE_FLAG) {
+                render_tetrimino();
+                msg ^= UPDATE_FLAG;
+            }
+        }
+        if ((keys & J_LEFT) && !(prev & J_LEFT)) {
+            core_move_left();
+            if (msg & UPDATE_FLAG) {
+                render_tetrimino();
+                msg ^= UPDATE_FLAG;
             }
         }
         prev = keys;
